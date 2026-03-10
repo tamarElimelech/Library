@@ -23,6 +23,7 @@ export class Book {
             referencedColumnName: 'id'
         }
     })
+    
     authors: Author[]
 
     @OneToMany(() => LibraryBook, (libraryBook) => libraryBook.book)

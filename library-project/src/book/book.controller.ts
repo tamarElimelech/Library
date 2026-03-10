@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { LoggingInterceptor } from '../interceptors/logging.interceptor';
 
+@UseInterceptors(LoggingInterceptor)
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) { }

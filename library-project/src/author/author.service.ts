@@ -4,23 +4,23 @@ import { UpdateAuthorDto } from './dto/update-author.dto';
 
 @Injectable()
 export class AuthorService {
-  create(createAuthorDto: CreateAuthorDto) {
+  createAuthor(createAuthorDto: CreateAuthorDto) {
     return 'This action adds a new author';
   }
 
-  findAll() {
+  getAllAuthors() {
     return `This action returns all author`;
   }
 
-  findOne(id: number) {
+  getAuthorById(id: number) {
     return `This action returns a #${id} author`;
   }
 
-  update(id: number, updateAuthorDto: UpdateAuthorDto) {
+  updateAuthor(id: number, updateAuthorDto: UpdateAuthorDto) {
     return `This action updates a #${id} author`;
   }
 
-  remove(id: number) {
+  deleteAuthor(id: number) {
     return `This action removes a #${id} author`;
   }
 }

@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common';
+import { LoggingInterceptor } from 'src/interceptors/logging.interceptor';
 import { AuthorService } from './author.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 
+@UseInterceptors(LoggingInterceptor)
 @Controller('author')
 export class AuthorController {
-  constructor(private readonly authorService: AuthorService) {}
+  constructor(private readonly authorService: AuthorService) { }
 
-  @Post()
-  create(@Body() createAuthorDto: CreateAuthorDto) {
-    return this.authorService.create(createAuthorDto);
+  @Post('/createAuthor')
+  createAuthor(@Body() createAuthorDto: CreateAuthorDto) {
+    return this.authorService.createAuthor(createAuthorDto);
   }
 
-  @Get()
-  findAll() {
-    return this.authorService.findAll();
+  @Get('/getAllAuthors')
+  getAllAuthors() {
+    return this.authorService.getAllAuthors();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authorService.findOne(+id);
+  @Get('/getAuthorById/:id')
+  getAuthorById(@Param('id') id: string) {
+    return this.authorService.getAuthorById(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthorDto: UpdateAuthorDto) {
-    return this.authorService.update(+id, updateAuthorDto);
+  @Patch('/updateAuthor/:id')
+  updateAuthor(@Param('id') id: string, @Body() updateAuthorDto: UpdateAuthorDto) {
+    return this.authorService.updateAuthor(+id, updateAuthorDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authorService.remove(+id);
+  @Delete('/deleteAuthor/:id')
+  deleteAuthor(@Param('id') id: string) {
+    return this.authorService.deleteAuthor(+id);
   }
 }

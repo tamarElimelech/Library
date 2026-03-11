@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common';
 import { LoggingInterceptor } from 'src/interceptors/logging.interceptor';
 import { AuthorService } from './author.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
@@ -10,7 +10,6 @@ export class AuthorController {
   constructor(private readonly authorService: AuthorService) { }
 
   @Post('/createAuthor')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   createAuthor(@Body() createAuthorDto: CreateAuthorDto) {
     return this.authorService.createAuthor(createAuthorDto);
   }
@@ -26,7 +25,6 @@ export class AuthorController {
   }
 
   @Patch('/updateAuthor/:id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   updateAuthor(@Param('id') id: string, @Body() updateAuthorDto: UpdateAuthorDto) {
     return this.authorService.updateAuthor(+id, updateAuthorDto);
   }

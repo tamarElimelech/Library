@@ -13,5 +13,5 @@ export class CreateBookDto {
     @ArrayNotEmpty({ message: 'authorIds cannot be empty' })
     @ArrayUnique()
     @IsInt({ each: true })
-    authorIds: number[];
+    authorIds: number[]
 }

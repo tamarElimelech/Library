@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Author } from 'src/author/entities/author.entity';
-import { ILike, In, Repository } from 'typeorm';
-import { CreateBookDto } from './dto/create-book.dto';
-import { UpdateBookDto } from './dto/update-book.dto';
-import { Book } from './entities/book.entity';
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Author } from 'src/author/entities/author.entity'
+import { ILike, In, Repository } from 'typeorm'
+import { CreateBookDto } from './dto/create-book.dto'
+import { UpdateBookDto } from './dto/update-book.dto'
+import { Book } from './entities/book.entity'
 
 @Injectable()
 export class BookService {
@@ -90,7 +90,7 @@ export class BookService {
     const books = await this.bookRepository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.authors', 'author')
-      .where('author.name ILIKE :prefix', { prefix: `${prefix}%` })
+      .where('author.name LIKE :prefix', { prefix: `${prefix}%` })
       .getMany()
     return books
   }

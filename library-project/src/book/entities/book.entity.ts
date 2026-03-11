@@ -1,6 +1,6 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Author } from "../../author/entities/author.entity";
-import { LibraryBook } from "../../library-book/entities/library-book.entity";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Author } from "../../author/entities/author.entity"
+import { LibraryBook } from "../../library-book/entities/library-book.entity"
 
 @Entity('Book')
 export class Book {
@@ -23,9 +23,9 @@ export class Book {
             referencedColumnName: 'id'
         }
     })
-    
+
     authors: Author[]
 
     @OneToMany(() => LibraryBook, (libraryBook) => libraryBook.book)
-    libraryBooks: LibraryBook[];
+    libraryBooks: LibraryBook[]
 }

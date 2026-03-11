@@ -38,13 +38,13 @@ export class AuthorService {
     const author = await this.authorRepository.create({
       name: createAuthorDto.name,
       books: books,
-    });
+    })
 
-    return this.authorRepository.save(author);
+    return this.authorRepository.save(author)
   }
 
   async getAllAuthors() {
-    return this.authorRepository.find({ relations: ['books'] });
+    return this.authorRepository.find({ relations: ['books'] })
   }
 
   async getAuthorById(id: number) {
@@ -56,22 +56,22 @@ export class AuthorService {
     const author = await this.findAuthorByIdOrFail(id, ['books'])
 
     if (updateAuthorDto.bookIds) {
-      const books = await this.bookRepository.findBy({ id: In(updateAuthorDto.bookIds) });
+      const books = await this.bookRepository.findBy({ id: In(updateAuthorDto.bookIds) })
       if (books.length !== updateAuthorDto.bookIds.length) {
-        throw new NotFoundException('One or more book IDs not found');
+        throw new NotFoundException('One or more book IDs not found')
       }
-      author.books = books;
+      author.books = books
     }
 
     if (updateAuthorDto.name) {
-      author.name = updateAuthorDto.name;
+      author.name = updateAuthorDto.name
     }
 
-    return this.authorRepository.save(author);
+    return this.authorRepository.save(author)
   }
 
   async deleteAuthor(id: number) {
     const author = await this.findAuthorByIdOrFail(id)
-    return this.authorRepository.remove(author);
+    return this.authorRepository.remove(author)
   }
 }

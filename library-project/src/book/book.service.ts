@@ -1,26 +1,97 @@
-import { Injectable } from '@nestjs/common';
-import { CreateBookDto } from './dto/create-book.dto';
-import { UpdateBookDto } from './dto/update-book.dto';
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Author } from 'src/author/entities/author.entity'
+import { ILike, In, Repository } from 'typeorm'
+import { CreateBookDto } from './dto/create-book.dto'
+import { UpdateBookDto } from './dto/update-book.dto'
+import { Book } from './entities/book.entity'
 
 @Injectable()
 export class BookService {
-  create(createBookDto: CreateBookDto) {
-    return 'This action adds a new book';
+  constructor(
+    @InjectRepository(Book)
+    private bookRepository: Repository<Book>,
+    @InjectRepository(Author)
+    private authorRepository: Repository<Author>
+  ) { }
+
+  private async findBookByIdOrFail(id: number, relations: string[] = []) {
+    const book = await this.bookRepository.findOne({
+      where: { id },
+      relations
+    })
+    if (!book) {
+      throw new NotFoundException(`Book with id ${id} not found`)
+    }
+    return book
   }
 
-  findAll() {
-    return `This action returns all book`;
+  async createBook(createBookDto: CreateBookDto) {
+    const authors = await this.authorRepository.findBy({
+      id: In(createBookDto.authorIds)
+    })
+
+    if (authors.length != createBookDto.authorIds.length) {
+      throw new NotFoundException('one or more author id not found')
+    }
+
+    const book = this.bookRepository.create(
+      {
+        name: createBookDto.name,
+        authors: authors
+      })
+    return this.bookRepository.save(book)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} book`;
+  async getAllBooks() {
+    return this.bookRepository.find()
   }
 
-  update(id: number, updateBookDto: UpdateBookDto) {
-    return `This action updates a #${id} book`;
+  async getBookById(id: number) {
+    return this.findBookByIdOrFail(id)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} book`;
+  async updateBook(id: number, updateBookDto: UpdateBookDto) {
+    const book = await this.findBookByIdOrFail(id, ['authors'])
+    if (updateBookDto.authorIds) {
+      const authors = await this.authorRepository.findBy({
+        id: In(updateBookDto.authorIds)
+      })
+      if (updateBookDto.authorIds.length != authors.length) {
+        throw new NotFoundException('One or more authors not found')
+      }
+      book.authors = authors
+    }
+    if (updateBookDto.name) {
+      book.name = updateBookDto.name
+    }
+    return await this.bookRepository.save(book)
+  }
+
+  async removeBook(id: number) {
+    const book = await this.findBookByIdOrFail(id)
+    if (!book) {
+      throw new NotFoundException(`Book with id ${id} not found`)
+    }
+    return this.bookRepository.remove(book)
+  }
+
+
+  async searchBook(prefix: string) {
+    const books = this.bookRepository.find({
+      where: {
+        name: ILike(`${prefix}%`)
+      }
+    })
+    return books
+  }
+
+  async searchBookByAuthor(prefix: string) {
+    const books = await this.bookRepository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.authors', 'author')
+      .where('author.name LIKE :prefix', { prefix: `${prefix}%` })
+      .getMany()
+    return books
   }
 }

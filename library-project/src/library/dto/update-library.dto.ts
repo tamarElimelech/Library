@@ -1,4 +1,10 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateLibraryDto } from './create-library.dto';
+import { ApiPropertyOptional } from '@nestjs/swagger'
+import { IsOptional, IsString, Length } from 'class-validator'
 
-export class UpdateLibraryDto extends PartialType(CreateLibraryDto) {}
+export class UpdateLibraryDto {
+    @ApiPropertyOptional()
+    @IsOptional()
+    @IsString()
+    @Length(1, 50)
+    name?: string
+}

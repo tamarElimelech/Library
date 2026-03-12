@@ -1,26 +1,61 @@
-import { Injectable } from '@nestjs/common';
-import { CreateLibraryDto } from './dto/create-library.dto';
-import { UpdateLibraryDto } from './dto/update-library.dto';
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { Library } from './entities/library.entity'
+import { CreateLibraryDto } from './dto/create-library.dto'
+import { UpdateLibraryDto } from './dto/update-library.dto'
 
 @Injectable()
 export class LibraryService {
-  create(createLibraryDto: CreateLibraryDto) {
-    return 'This action adds a new library';
+
+  constructor(
+    @InjectRepository(Library)
+    private libraryRepository: Repository<Library>,
+  ) { }
+
+  private async findLibraryByIdOrFail(id: number, relations: string[] = []){
+    const library = await this.libraryRepository.findOne({
+      where: { id },
+      relations
+    })
+
+    if (!library) {
+      throw new NotFoundException(`Library with id ${id} not found`)
+    }
+    return library
   }
 
-  findAll() {
-    return `This action returns all library`;
+  async createLibrary(createLibraryDto: CreateLibraryDto) {
+
+    const library = this.libraryRepository.create({
+      name: createLibraryDto.name
+    })
+
+    return this.libraryRepository.save(library)
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} library`;
+  async getAllLibraries() {
+    return this.libraryRepository.find()
   }
 
-  update(id: number, updateLibraryDto: UpdateLibraryDto) {
-    return `This action updates a #${id} library`;
+  async getLibraryById(id: number) {
+    return this.findLibraryByIdOrFail(id)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} library`;
+  async updateLibrary(id: number, updateLibraryDto: UpdateLibraryDto) {
+
+    const library = await this.findLibraryByIdOrFail(id)
+
+    if (updateLibraryDto.name) {
+      library.name = updateLibraryDto.name
+    }
+
+    return this.libraryRepository.save(library)
+  }
+
+  async removeLibrary(id: number) {
+    const library = await this.findLibraryByIdOrFail(id)
+
+    return this.libraryRepository.remove(library)
   }
 }

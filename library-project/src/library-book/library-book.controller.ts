@@ -1,6 +1,12 @@
-import { Controller, Delete, Get, Param, Query } from '@nestjs/common'
+import { Controller, Delete, Get, Param, Query, UseGuards, UseInterceptors } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+import { ApiBearerAuth } from '@nestjs/swagger'
+import { LoggingInterceptor } from 'src/interceptors/logging.interceptor'
 import { LibraryBookService } from './library-book.service'
 
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
+@UseInterceptors(LoggingInterceptor)
 @Controller('library-book')
 export class LibraryBookController {
   constructor(private readonly libraryBookService: LibraryBookService) { }

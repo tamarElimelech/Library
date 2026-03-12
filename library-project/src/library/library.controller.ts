@@ -1,8 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+import { ApiBearerAuth } from '@nestjs/swagger'
+import { LoggingInterceptor } from 'src/interceptors/logging.interceptor'
 import { CreateLibraryDto } from './dto/create-library.dto'
 import { UpdateLibraryDto } from './dto/update-library.dto'
 import { LibraryService } from './library.service'
 
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
+@UseInterceptors(LoggingInterceptor)
 @Controller('library')
 export class LibraryController {
   constructor(private readonly libraryService: LibraryService) { }

@@ -1,9 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common'
 import { LoggingInterceptor } from 'src/interceptors/logging.interceptor'
 import { AuthorService } from './author.service'
 import { CreateAuthorDto } from './dto/create-author.dto'
 import { UpdateAuthorDto } from './dto/update-author.dto'
+import { ApiBearerAuth } from '@nestjs/swagger'
+import { AuthGuard } from '@nestjs/passport';
 
+
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 @UseInterceptors(LoggingInterceptor)
 @Controller('author')
 export class AuthorController {

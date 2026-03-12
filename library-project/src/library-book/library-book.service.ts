@@ -81,6 +81,29 @@ export class LibraryBookService {
     return this.libraryBookRepository.remove(libraryBook)
   }
 
-  
+  private async getBooksByLibraryWithFilter(
+    libraryId: number,
+    filterFn: (lb: LibraryBook) => boolean
+  ) {
+    const libraryBooks = await this.libraryBookRepository.find({ where: { libraryId } })
+
+    const filteredLibraryBooks = libraryBooks.filter(filterFn)
+
+    if (filteredLibraryBooks.length === 0) return []
+
+    const bookIds = filteredLibraryBooks.map(lb => lb.bookId)
+
+    return this.bookRepository.findBy({ id: In(bookIds) })
+  }
+
+  async getAllAvailableBooksByLibraryId(libraryId: number) {
+
+    return this.getBooksByLibraryWithFilter(libraryId, lb => lb.available > 0)
+  }
+
+  async getAllBorrowBooksByLibraryId(libraryId: number) {
+
+    return this.getBooksByLibraryWithFilter(libraryId, lb => lb.bookCount - lb.available > 0)
+  }
 
 }

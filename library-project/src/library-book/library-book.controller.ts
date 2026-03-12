@@ -10,6 +10,16 @@ export class LibraryBookController {
     return this.libraryBookService.getAllBooksByLibraryId(libraryId)
   }
 
+  @Get('/getAllAvailableBooksByLibraryId/:libraryId')
+  getAllAvailableBooksByLibraryId(@Param('libraryId') libraryId: number) {
+    return this.libraryBookService.getAllAvailableBooksByLibraryId(libraryId)
+  }
+
+  @Get('/getAllBorrowBooksByLibraryId/:libraryId')
+  getAllBorrowBooksByLibraryId(@Param('libraryId') libraryId: number) {
+    return this.libraryBookService.getAllBorrowBooksByLibraryId(libraryId)
+  }
+
   @Delete('deleteBookFromLibrary/:bookId/:libraryId')
   deleteBookFromLibrary(
     @Param('bookId') bookId: number,

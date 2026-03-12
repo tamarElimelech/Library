@@ -4,18 +4,24 @@ import { LibraryBook } from "../../library-book/entities/library-book.entity";
 @Entity('Borrow')
 export class Borrow {
     @PrimaryGeneratedColumn()
-    id: number;
+    id: number
+
+    @Column()
+    libraryId: number
+  
+    @Column()
+    bookId: number
 
     @ManyToOne(() => LibraryBook, (libraryBook) => libraryBook.borrows)
     @JoinColumn([
         { name: "libraryId", referencedColumnName: "libraryId" },
         { name: "bookId", referencedColumnName: "bookId" }
     ])
-    libraryBook: LibraryBook;
+    libraryBook: LibraryBook
 
     @Column({ type: 'datetime', default: () => 'GETDATE()' })
-    borrowDate: Date;
+    borrowDate: Date
 
     @Column({ type: 'datetime', nullable: true })
-    returnDate: Date;
+    returnDate: Date
 }

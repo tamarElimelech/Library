@@ -1,10 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { CreateLibraryBookDto } from './dto/create-library-book.dto';
-import { UpdateLibraryBookDto } from './dto/update-library-book.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { LibraryBook } from './entities/library-book.entity';
-import { In, Repository } from 'typeorm';
-import { Book } from 'src/book/entities/book.entity';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Book } from 'src/book/entities/book.entity'
+import { In, Repository } from 'typeorm'
+import { LibraryBook } from './entities/library-book.entity'
 
 @Injectable()
 export class LibraryBookService {
@@ -17,29 +15,6 @@ export class LibraryBookService {
     private bookRepository: Repository<Book>
   ) { }
 
-  // create(createLibraryBookDto: CreateLibraryBookDto) {
-  //   return 'This action adds a new libraryBook';
-  // }
-
-  // findAll() {
-  //   return `This action returns all libraryBook`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} libraryBook`;
-  // }
-
-  // update(id: number, updateLibraryBookDto: UpdateLibraryBookDto) {
-  //   return `This action updates a #${id} libraryBook`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} libraryBook`;
-  // }
-
-  // async removeBookFromLibrary() { }
-  // async getAllAvailableBooks() { }
-  // async getAllBorrowBooks() { }
   async getAllBooksByLibraryId(libraryId: number) {
     const libraryBooks = await this.libraryBookRepository.find({
       where: { libraryId }
@@ -52,4 +27,6 @@ export class LibraryBookService {
     })
     return books
   }
+
+
 }

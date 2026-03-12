@@ -1,34 +1,50 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { BookService } from './book.service';
-import { CreateBookDto } from './dto/create-book.dto';
-import { UpdateBookDto } from './dto/update-book.dto';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common'
+import { LoggingInterceptor } from '../interceptors/logging.interceptor'
+import { BookService } from './book.service'
+import { CreateBookDto } from './dto/create-book.dto'
+import { UpdateBookDto } from './dto/update-book.dto'
+import { ApiBearerAuth } from '@nestjs/swagger'
+import { AuthGuard } from '@nestjs/passport'
 
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
+@UseInterceptors(LoggingInterceptor)
 @Controller('book')
 export class BookController {
-  constructor(private readonly bookService: BookService) {}
+  constructor(private readonly bookService: BookService) { }
 
-  @Post()
-  create(@Body() createBookDto: CreateBookDto) {
-    return this.bookService.create(createBookDto);
+  @Post('/createBook')
+  async createBook(@Body() createBookDto: CreateBookDto) {
+    return this.bookService.createBook(createBookDto)
   }
 
-  @Get()
-  findAll() {
-    return this.bookService.findAll();
+  @Get('/getAllBooks')
+  getAllBooks() {
+    return this.bookService.getAllBooks()
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bookService.findOne(+id);
+  @Get('/getBookById/:id')
+  getBookById(@Param('id') id: string) {
+    return this.bookService.getBookById(+id)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
-    return this.bookService.update(+id, updateBookDto);
+  @Patch('/updateBook/:id')
+  updateBook(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
+    return this.bookService.updateBook(+id, updateBookDto)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bookService.remove(+id);
+  @Delete('deleteBook/:id')
+  deleteBook(@Param('id') id: string) {
+    return this.bookService.removeBook(+id)
+  }
+
+  @Get('/searchBook')
+  searchBook(@Query('prefix') prefix: string) {
+    return this.bookService.searchBook(prefix)
+  }
+
+  @Get('/searchBookByAuthor')
+  searchBookByAuthor(@Query('prefix') prefix: string) {
+    return this.bookService.searchBookByAuthor(prefix)
   }
 }

@@ -15,7 +15,7 @@ export class BookService {
     private authorRepository: Repository<Author>
   ) { }
 
-  private async findBookByIdOrFail(id: number, relations: string[] = []) {
+  private async findBookOrFail(id: number, relations: string[] = []) {
     const book = await this.bookRepository.findOne({
       where: { id },
       relations
@@ -48,11 +48,11 @@ export class BookService {
   }
 
   async getBookById(id: number) {
-    return this.findBookByIdOrFail(id)
+    return this.findBookOrFail(id)
   }
 
   async updateBook(id: number, updateBookDto: UpdateBookDto) {
-    const book = await this.findBookByIdOrFail(id, ['authors'])
+    const book = await this.findBookOrFail(id, ['authors'])
     if (updateBookDto.authorIds) {
       const authors = await this.authorRepository.findBy({
         id: In(updateBookDto.authorIds)

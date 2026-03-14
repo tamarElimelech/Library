@@ -7,25 +7,25 @@ import { Library } from "../../library/entities/library.entity";
 export class LibraryBook {
 
     @PrimaryColumn()
-    libraryId: number;
+    libraryId: number
 
     @PrimaryColumn()
-    bookId: number;
+    bookId: number
 
     @ManyToOne(() => Library, (library) => library.libraryBooks)
     @JoinColumn({ name: 'libraryId' })
-    library: Library;
+    library: Library
 
     @ManyToOne(() => Book, (book) => book.libraryBooks)
     @JoinColumn({ name: 'bookId' })
-    book: Book;
+    book: Book
 
     @Column()
-    bookCount: number;
+    bookCount: number
 
     @Column()
-    available: number;
+    available: number
 
     @OneToMany(() => Borrow, (borrow) => borrow.libraryBook)
-    borrows: Borrow[];
+    borrows: Borrow[]
 }

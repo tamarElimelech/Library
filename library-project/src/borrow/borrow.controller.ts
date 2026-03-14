@@ -23,8 +23,8 @@ export class BorrowController {
   }
 
   @Get('/getBorrowsHistoryByLibraryId/:libraryId')
-  getAllBorrowsHistoryByLibraryId(@Param('libraryId') libraryId:number){
-  return this.borrowService.getBorrowsHistoryByLibraryId(libraryId)
+  getAllBorrowsHistoryByLibraryId(@Param('libraryId') libraryId: number) {
+    return this.borrowService.getBorrowsHistoryByLibraryId(libraryId)
   }
 
 }

@@ -13,28 +13,28 @@ import { LibraryService } from './library.service'
 export class LibraryController {
   constructor(private readonly libraryService: LibraryService) { }
 
-  @Post()
-  create(@Body() createLibraryDto: CreateLibraryDto) {
+  @Post('/createLibrary')
+  createLibrary(@Body() createLibraryDto: CreateLibraryDto) {
     return this.libraryService.createLibrary(createLibraryDto)
   }
 
-  @Get()
-  findAll() {
+  @Get('/getAllLibraries')
+  getAllLibraries() {
     return this.libraryService.getAllLibraries()
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get('getLibraryById/:id')
+  getLibraryById(@Param('id') id: string) {
     return this.libraryService.getLibraryById(+id)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLibraryDto: UpdateLibraryDto) {
+  @Patch('updateLibrary/:id')
+  updateLibrary(@Param('id') id: string, @Body() updateLibraryDto: UpdateLibraryDto) {
     return this.libraryService.updateLibrary(+id, updateLibraryDto)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete('removeLibrary/:id')
+  removeLibrary(@Param('id') id: string) {
     return this.libraryService.removeLibrary(+id)
   }
 }

@@ -10,5 +10,5 @@ export class Library {
     name: string
 
     @OneToMany(() => LibraryBook, (libraryBook) => libraryBook.library)
-    libraryBooks: LibraryBook[];
+    libraryBooks: LibraryBook[]
 }

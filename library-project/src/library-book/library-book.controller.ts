@@ -2,8 +2,8 @@ import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards, UseInterc
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBearerAuth } from '@nestjs/swagger'
 import { LoggingInterceptor } from 'src/interceptors/logging.interceptor'
-import { LibraryBookService } from './library-book.service'
 import { AddBookToLibraryDto } from './dto/add-book-to-library.dto'
+import { LibraryBookService } from './library-book.service'
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))

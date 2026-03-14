@@ -2,8 +2,8 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm'
 import { Book } from 'src/book/entities/book.entity'
 import { In, Repository } from 'typeorm'
-import { LibraryBook } from './entities/library-book.entity'
 import { AddBookToLibraryDto } from './dto/add-book-to-library.dto'
+import { LibraryBook } from './entities/library-book.entity'
 
 @Injectable()
 export class LibraryBookService {
@@ -18,7 +18,7 @@ export class LibraryBookService {
 
   async addBookToLibrary(dto: AddBookToLibraryDto) {
 
-    const { libraryId, bookId, count=1 } = dto
+    const { libraryId, bookId, count = 1 } = dto
 
     const libraryBook = await this.libraryBookRepository.findOne({
       where: { libraryId, bookId }

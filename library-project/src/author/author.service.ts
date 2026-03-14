@@ -22,16 +22,16 @@ export class AuthorService {
       relations
     })
     if (!author) {
-      throw new NotFoundException(`Author with id ${id} not found`);
+      throw new NotFoundException(`Author with id ${id} not found`)
     }
     return author
   }
 
   async createAuthor(createAuthorDto: CreateAuthorDto) {
-    const books = await this.bookRepository.findBy({ id: In(createAuthorDto.bookIds) });
+    const books = await this.bookRepository.findBy({ id: In(createAuthorDto.bookIds) })
     if (createAuthorDto.bookIds && createAuthorDto.bookIds.length > 0) {
       if (books.length !== createAuthorDto.bookIds.length) {
-        throw new NotFoundException('One or more book IDs not found');
+        throw new NotFoundException('One or more book IDs not found')
       }
     }
 

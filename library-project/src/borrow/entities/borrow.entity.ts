@@ -8,7 +8,7 @@ export class Borrow {
 
     @Column()
     libraryId: number
-  
+
     @Column()
     bookId: number
 

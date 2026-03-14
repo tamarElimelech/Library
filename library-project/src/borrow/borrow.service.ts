@@ -1,15 +1,15 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { LibraryBook } from 'src/library-book/entities/library-book.entity';
 import { DataSource, Repository } from 'typeorm';
 import { CreateBorrowDto } from './dto/create-borrow.dto';
 import { Borrow } from './entities/borrow.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class BorrowService {
   constructor(private dataSource: DataSource,
     @InjectRepository(Borrow)
-    private borrowRepository:Repository<Borrow>) { }
+    private borrowRepository: Repository<Borrow>) { }
 
   async borrowBook(createBorrowDto: CreateBorrowDto) {
     const { libraryId, bookId } = createBorrowDto
@@ -28,7 +28,7 @@ export class BorrowService {
         throw new ConflictException(`No available copies of book ${bookId} in library ${libraryId} to borrow`)
       }
 
-      const borrow =await manager.create(Borrow, { bookId, libraryId })
+      const borrow = await manager.create(Borrow, { bookId, libraryId })
 
       await manager.save(borrow)
 
@@ -49,7 +49,7 @@ export class BorrowService {
       if (!borrow) {
         throw new NotFoundException(`Borrow ${borrowId} not found`);
       }
-      
+
       if (borrow.returnDate != null) {
         throw new ConflictException(`Book already returned`);
       }
@@ -59,16 +59,16 @@ export class BorrowService {
 
       await manager.save(borrow.libraryBook)
       await manager.save(borrow)
-      
+
       return borrow
 
     })
 
   }
 
-  async getBorrowsHistoryByLibraryId(libraryId:number){
+  async getBorrowsHistoryByLibraryId(libraryId: number) {
     return this.borrowRepository.find({
-      where:{libraryId}
+      where: { libraryId }
     })
   }
 }

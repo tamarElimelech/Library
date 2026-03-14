@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Book } from 'src/book/entities/book.entity'
 import { In, Repository } from 'typeorm'
 import { LibraryBook } from './entities/library-book.entity'
+import { AddBookToLibraryDto } from './dto/add-book-to-library.dto'
 
 @Injectable()
 export class LibraryBookService {
@@ -14,6 +15,32 @@ export class LibraryBookService {
     @InjectRepository(Book)
     private bookRepository: Repository<Book>
   ) { }
+
+  async addBookToLibrary(dto: AddBookToLibraryDto) {
+
+    const { libraryId, bookId, count=1 } = dto
+
+    const libraryBook = await this.libraryBookRepository.findOne({
+      where: { libraryId, bookId }
+    })
+
+    if (libraryBook) {
+
+      libraryBook.bookCount += count
+      libraryBook.available += count
+
+      return this.libraryBookRepository.save(libraryBook)
+    }
+
+    const newLibraryBook = this.libraryBookRepository.create({
+      libraryId,
+      bookId,
+      bookCount: count,
+      available: count
+    })
+
+    return this.libraryBookRepository.save(newLibraryBook)
+  }
 
   async getAllBooksByLibraryId(libraryId: number) {
     const libraryBooks = await this.libraryBookRepository.find({

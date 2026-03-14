@@ -1,13 +1,12 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthorModule } from './author/author.module';
-import { BookModule } from './book/book.module';
-import { LibraryModule } from './library/library.module';
-import { BorrowModule } from './borrow/borrow.module';
-import { LibraryBookModule } from './library-book/library-book.module';
+import { Module } from '@nestjs/common'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { AuthModule } from './auth/auth.module'
+import { AuthorModule } from './author/author.module'
+import { BookModule } from './book/book.module'
+import { BorrowModule } from './borrow/borrow.module'
+import { LibraryBookModule } from './library-book/library-book.module'
+import { LibraryModule } from './library/library.module'
 
 @Module({
   imports: [
@@ -23,7 +22,7 @@ import { LibraryBookModule } from './library-book/library-book.module';
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false, 
+        synchronize: false,
         extra: {
           trustServerCertificate: true,
         },
@@ -34,8 +33,7 @@ import { LibraryBookModule } from './library-book/library-book.module';
     LibraryModule,
     BorrowModule,
     LibraryBookModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+    AuthModule,
+  ]
 })
-export class AppModule {}
+export class AppModule { }

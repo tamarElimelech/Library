@@ -68,15 +68,6 @@ export class BookService {
     return await this.bookRepository.save(book)
   }
 
-  async removeBook(id: number) {
-    const book = await this.findBookByIdOrFail(id)
-    if (!book) {
-      throw new NotFoundException(`Book with id ${id} not found`)
-    }
-    return this.bookRepository.remove(book)
-  }
-
-
   async searchBook(prefix: string) {
     const books = this.bookRepository.find({
       where: {

@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+import { ApiBearerAuth } from '@nestjs/swagger'
 import { LoggingInterceptor } from '../interceptors/logging.interceptor'
 import { BookService } from './book.service'
 import { CreateBookDto } from './dto/create-book.dto'
 import { UpdateBookDto } from './dto/update-book.dto'
-import { ApiBearerAuth } from '@nestjs/swagger'
-import { AuthGuard } from '@nestjs/passport'
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -31,11 +31,6 @@ export class BookController {
   @Patch('/updateBook/:id')
   updateBook(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
     return this.bookService.updateBook(+id, updateBookDto)
-  }
-
-  @Delete('deleteBook/:id')
-  deleteBook(@Param('id') id: string) {
-    return this.bookService.removeBook(+id)
   }
 
   @Get('/searchBook')

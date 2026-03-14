@@ -1,8 +1,9 @@
-import { Controller, Delete, Get, Param, Query, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiBearerAuth } from '@nestjs/swagger'
 import { LoggingInterceptor } from 'src/interceptors/logging.interceptor'
 import { LibraryBookService } from './library-book.service'
+import { AddBookToLibraryDto } from './dto/add-book-to-library.dto'
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -10,6 +11,11 @@ import { LibraryBookService } from './library-book.service'
 @Controller('library-book')
 export class LibraryBookController {
   constructor(private readonly libraryBookService: LibraryBookService) { }
+
+  @Post('addBookToLibrary')
+  addBookToLibrary(@Body() dto: AddBookToLibraryDto) {
+    return this.libraryBookService.addBookToLibrary(dto)
+  }
 
   @Get('/getAllBooksByLibraryId/:libraryId')
   getAllBooksByLibraryId(@Param('libraryId') libraryId: number) {

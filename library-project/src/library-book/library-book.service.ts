@@ -55,7 +55,7 @@ export class LibraryBookService {
     return books
   }
 
-   async findLibraryBookOrFail(bookId: number, libraryId: number) {
+  async findLibraryBookOrFail(bookId: number, libraryId: number) {
     const libraryBook = await this.libraryBookRepository.findOne({
       where: { libraryId, bookId }
     })
@@ -108,7 +108,7 @@ export class LibraryBookService {
     return this.libraryBookRepository.remove(libraryBook)
   }
 
-  private async getBooksByLibraryWithFilter(
+  async getBooksByLibraryWithFilter(
     libraryId: number,
     filterFn: (lb: LibraryBook) => boolean
   ) {

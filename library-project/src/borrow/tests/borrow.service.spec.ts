@@ -14,9 +14,9 @@ describe('BorrowService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [BorrowService,
-        { 
-          provide: DataSource, 
-          useValue: mockDataSource 
+        {
+          provide: DataSource,
+          useValue: mockDataSource
         },
         {
           provide: getRepositoryToken(Borrow),
@@ -39,7 +39,33 @@ describe('BorrowService', () => {
     expect(service).toBeDefined();
   });
 
+  describe('borrow book', () => {
+    it('should borrow book successfully', async () => {
+      const createBorrowDto = { libraryId: 1, bookId: 1 }
+
+      mockLibraryBookRepository.findOne.mockResolvedValue({
+        libraryId: 1,
+        bookId: 1,
+        available: 3,
+        bookCount: 3
+      })
+
+      mockDataSource.transaction.mockImplementation(async (fn) => fn({
+        findOne: mockLibraryBookRepository.findOne,
+        create: jest.fn((dto) => dto),
+        save: jest.fn((entity) => entity)
+      }))
+
+      const result = await service.borrowBook(createBorrowDto)
+
+      expect(result).toBeDefined()
+      expect(mockLibraryBookRepository.findOne).toHaveBeenCalledWith(
+        LibraryBook, { where: { "bookId": 1, "libraryId": 1 } }
+      )
+      expect(mockDataSource.transaction).toHaveBeenCalledTimes(1)
+    })
+
+  })
 
 
-  
 });

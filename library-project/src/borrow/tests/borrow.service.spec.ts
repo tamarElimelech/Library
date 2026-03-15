@@ -1,11 +1,12 @@
-import { ConflictException, NotFoundException } from '@nestjs/common'
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { LibraryBook } from '../../library-book/entities/library-book.entity';
+import { mockLibraryBookRepository } from '../../library-book/tests/library-book.mocks';
 import { BorrowService } from '../borrow.service';
 import { Borrow } from '../entities/borrow.entity';
-import { mockBorrowRepository, mockDataSource, mockLibraryBookRepository } from './borrow.mocks';
+import { mockBorrowRepository, mockDataSource } from './borrow.mocks';
 
 describe('BorrowService', () => {
   let service: BorrowService

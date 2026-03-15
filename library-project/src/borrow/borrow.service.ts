@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LibraryBook } from 'src/library-book/entities/library-book.entity';
+import { LibraryBook } from '../library-book/entities/library-book.entity';
 import { DataSource, Repository } from 'typeorm';
 import { CreateBorrowDto } from './dto/create-borrow.dto';
 import { Borrow } from './entities/borrow.entity';

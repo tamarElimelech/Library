@@ -55,7 +55,7 @@ export class LibraryBookService {
     return books
   }
 
-  private async findLibraryBookOrFail(bookId: number, libraryId: number) {
+   async findLibraryBookOrFail(bookId: number, libraryId: number) {
     const libraryBook = await this.libraryBookRepository.findOne({
       where: { libraryId, bookId }
     })

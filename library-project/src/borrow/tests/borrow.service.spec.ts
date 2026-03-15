@@ -5,6 +5,7 @@ import { DataSource, Repository } from 'typeorm';
 import { BorrowService } from '../borrow.service';
 import { Borrow } from '../entities/borrow.entity';
 import { mockBorrowRepository, mockDataSource, mockLibraryBookRepository } from './borrow.mocks';
+import { NotFoundException } from '@nestjs/common';
 
 describe('BorrowService', () => {
   let service: BorrowService
@@ -40,8 +41,10 @@ describe('BorrowService', () => {
   });
 
   describe('borrow book', () => {
+
+    const createBorrowDto = { libraryId: 1, bookId: 1 }
+
     it('should borrow book successfully', async () => {
-      const createBorrowDto = { libraryId: 1, bookId: 1 }
 
       mockLibraryBookRepository.findOne.mockResolvedValue({
         libraryId: 1,
@@ -65,7 +68,22 @@ describe('BorrowService', () => {
       expect(mockDataSource.transaction).toHaveBeenCalledTimes(1)
     })
 
+    it('should throw NotFoundException when libraryBook not found', async () => {
+
+      mockLibraryBookRepository.findOne.mockResolvedValue(null)
+
+      mockDataSource.transaction.mockImplementation(async (fn) => fn({
+        findOne: mockLibraryBookRepository.findOne
+      }))
+
+      await expect(service.borrowBook(createBorrowDto))
+        .rejects
+        .toThrow(NotFoundException)
+
+    })
+
+
   })
 
 
-});
+})

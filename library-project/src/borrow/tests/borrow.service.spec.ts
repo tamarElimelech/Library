@@ -1,16 +1,14 @@
+import { ConflictException, NotFoundException } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 import { LibraryBook } from '../../library-book/entities/library-book.entity';
-import { DataSource, Repository } from 'typeorm';
 import { BorrowService } from '../borrow.service';
 import { Borrow } from '../entities/borrow.entity';
 import { mockBorrowRepository, mockDataSource, mockLibraryBookRepository } from './borrow.mocks';
-import { ConflictException, NotFoundException } from '@nestjs/common';
 
 describe('BorrowService', () => {
   let service: BorrowService
-  let dataSource: DataSource
-  let borrowRepository: Repository<Borrow>
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,8 +29,6 @@ describe('BorrowService', () => {
     }).compile();
 
     service = module.get<BorrowService>(BorrowService)
-    dataSource = module.get<DataSource>(DataSource)
-    borrowRepository = module.get<Repository<Borrow>>(getRepositoryToken(Borrow))
 
     jest.clearAllMocks()
   })
@@ -90,6 +86,57 @@ describe('BorrowService', () => {
       })
 
       await expect(service.borrowBook(createBorrowDto)).rejects.toThrow(ConflictException)
+    })
+
+  })
+
+  describe('return book', () => {
+    const borrowId = 1
+    it('should return book successfully', async () => {
+      const borrowMock = {
+        id: borrowId,
+        returnDate: null,
+        libraryBook: { available: 2 },
+      }
+      mockDataSource.transaction.mockImplementation(async (fn) => {
+        return fn({
+          findOne: jest.fn().mockResolvedValue(borrowMock),
+          save: jest.fn((entity) => entity),
+        })
+      })
+
+      const result = await service.returnBook(borrowId)
+
+      expect(result.returnDate).toBeInstanceOf(Date)
+      expect(result.libraryBook.available).toBe(3)
+    })
+
+    it('should throw NotFoundException if borrow not found', async () => {
+      mockDataSource.transaction.mockImplementation(async (fn) => {
+        return fn({
+          findOne: jest.fn().mockResolvedValue(null),
+          save: jest.fn(),
+        })
+      })
+
+      await expect(service.returnBook(borrowId)).rejects.toThrow(NotFoundException)
+    })
+
+    it('should throw ConflictException if book already returned', async () => {
+      const borrowMock = {
+        id: borrowId,
+        returnDate: new Date(),
+        libraryBook: { available: 2 },
+      }
+
+      mockDataSource.transaction.mockImplementation(async (fn) => {
+        return fn({
+          findOne: jest.fn().mockResolvedValue(borrowMock),
+          save: jest.fn(),
+        })
+      })
+
+      await expect(service.returnBook(borrowId)).rejects.toThrow(ConflictException)
     })
 
   })

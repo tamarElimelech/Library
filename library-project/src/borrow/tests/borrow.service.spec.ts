@@ -5,7 +5,7 @@ import { DataSource, Repository } from 'typeorm';
 import { BorrowService } from '../borrow.service';
 import { Borrow } from '../entities/borrow.entity';
 import { mockBorrowRepository, mockDataSource, mockLibraryBookRepository } from './borrow.mocks';
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 
 describe('BorrowService', () => {
   let service: BorrowService
@@ -34,6 +34,7 @@ describe('BorrowService', () => {
     dataSource = module.get<DataSource>(DataSource)
     borrowRepository = module.get<Repository<Borrow>>(getRepositoryToken(Borrow))
 
+    jest.clearAllMocks()
   })
 
   it('should be defined', () => {
@@ -44,6 +45,12 @@ describe('BorrowService', () => {
 
     const createBorrowDto = { libraryId: 1, bookId: 1 }
 
+    mockDataSource.transaction.mockImplementation(async (fn) => fn({
+      findOne: mockLibraryBookRepository.findOne,
+      create: jest.fn((dto) => dto),
+      save: jest.fn((entity) => entity)
+    }))
+
     it('should borrow book successfully', async () => {
 
       mockLibraryBookRepository.findOne.mockResolvedValue({
@@ -53,11 +60,7 @@ describe('BorrowService', () => {
         bookCount: 3
       })
 
-      mockDataSource.transaction.mockImplementation(async (fn) => fn({
-        findOne: mockLibraryBookRepository.findOne,
-        create: jest.fn((dto) => dto),
-        save: jest.fn((entity) => entity)
-      }))
+
 
       const result = await service.borrowBook(createBorrowDto)
 
@@ -72,16 +75,22 @@ describe('BorrowService', () => {
 
       mockLibraryBookRepository.findOne.mockResolvedValue(null)
 
-      mockDataSource.transaction.mockImplementation(async (fn) => fn({
-        findOne: mockLibraryBookRepository.findOne
-      }))
-
       await expect(service.borrowBook(createBorrowDto))
         .rejects
         .toThrow(NotFoundException)
 
     })
 
+    it('should throw ConflictException when no books available', async () => {
+      mockLibraryBookRepository.findOne.mockResolvedValue({
+        libraryId: 1,
+        bookId: 1,
+        available: 0,
+        bookCount: 3
+      })
+
+      await expect(service.borrowBook(createBorrowDto)).rejects.toThrow(ConflictException)
+    })
 
   })
 
